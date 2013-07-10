@@ -57,8 +57,9 @@ module Spree::Search
 
       @count = result.total
       @properties[:total_entries] = @count
-      products = result.records #Kaminari.paginate_array(result.records, :total_count => @count).page(page).per(per_page)
-      ids = products.map(&:id)
+      #products = result.records 
+      products = Kaminari.paginate_array(result.records, :total_count => @count).page(page).per(per_page)
+      ids = result.records.map(&:id)
       @properties[:products] = products
 
       @properties[:suggest] = nil
@@ -71,7 +72,7 @@ module Spree::Search
       end
 
       @properties[:available_facets] = parse_facets_hash(result.facets)
-      reorder(Spree::Product.where("spree_products.id" => ids), ids)
+      reorder(Spree::Product.where("spree_products.id" => products.map(&:id)), ids)
       #Spree::Product.where("spree_products.id" => products.map(&:id))
     end
 
